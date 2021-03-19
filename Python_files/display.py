@@ -8,3 +8,9 @@ print(required_data.head())
 
 
 pid = input("Enter the required proposal ID: ")
+
+
+dfpropid = filedata.loc[filedata['Proposal_ID'] == pid] 
+dfpropid = dfpropid.set_index('Serial number')
+
+print(dfpropid.head())
