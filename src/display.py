@@ -5,7 +5,7 @@ from matplotlib.figure import Figure
 from matplotlib.backends.backend_tkagg import (FigureCanvasTkAgg,NavigationToolbar2Tk) 
 
 
-file1='D:\Club\Tech sec 2021\Inter IIT 2021 March\ASTROSAT\Astrosat_InterIIT\Python_files\Astrosat_readings_new.csv'
+file1='D:\Club\Tech sec 2021\Inter IIT 2021 March\ASTROSAT\Astrosat_InterIIT\src\Astrosat_readings_new.csv'
 filedata=pd.read_csv(file1)
 ## Storing unique catalog Proposal ids in a set
 catalog_data = filedata[['Proposal_ID']]
