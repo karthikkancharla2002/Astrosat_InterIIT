@@ -1,4 +1,6 @@
 import numpy as np
+import sys
+!{sys.executable} -m pip install mpld3
 
 # Set up matplotlib
 import matplotlib.pyplot as plt
