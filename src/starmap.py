@@ -1,4 +1,6 @@
 import numpy as np
+import sys
+!{sys.executable} -m pip install mpld3
 
 # Set up matplotlib
 import matplotlib.pyplot as plt
@@ -36,3 +38,4 @@ labels = ['point {0}'.format(i + 1) for i in range(N)]
 tooltip = mpld3.plugins.PointLabelTooltip(t, labels=labels)
 mpld3.plugins.connect(fig, tooltip)
 mpld3.show()
+
