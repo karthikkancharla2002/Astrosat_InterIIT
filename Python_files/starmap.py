@@ -36,7 +36,15 @@ fig = plt.figure(figsize=(8,6))
 ax = fig.add_subplot(111, projection="mollweide")
 ax.scatter(ra.radian, dec.radian)
 fig = plt.figure(figsize=(8,6))
-ax = fig.add_subplot(111, projection="mollweide")
-ax.scatter(ra.radian, dec.radian)
+ax = fig.add_subplot(projection="mollweide")
+t=ax.scatter(ra.radian, dec.radian)
 ax.set_xticklabels(['14h','16h','18h','20h','22h','0h','2h','4h','6h','8h','10h'])
 ax.grid(True)
+t
+labels = ['point {0}'.format(i + 1) for i in range(N)]
+tooltip = mpld3.plugins.PointLabelTooltip(t, labels=labels)
+mpld3.plugins.connect(fig, tooltip)
+
+mpld3.show()
+
+
