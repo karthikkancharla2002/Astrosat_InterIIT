@@ -50,11 +50,14 @@ for i in range(len(source)):
     if val==source[i]:
         r=y[i]
         r2=y2[i]
+count=0
 for i in range(len(x)):
     if r==x[i]:
         if x2[i]==r2:
+            count=count+1
             print("detected by astrosat")
             print(tbl[i])
-        else:
-            print("not detected by astrosat")
+if count==0:
+    print("Not detected by astrosat)
+        
     
