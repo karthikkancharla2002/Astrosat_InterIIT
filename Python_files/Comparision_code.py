@@ -6,7 +6,18 @@ import matplotlib.pyplot as plt
 from astropy.io import ascii
 tbl = ascii.read("Astrosat_readings_new.csv")
 data = ascii.read("lmxb_hmxb combined_cosmic sources.csv")
-
+a=tbl['RA']
+b= tbl['Dec']
+#rounding of astrosat_RA(x)
+x=[]
+for i in range(len(a)):
+    x.append(round(a[i],2));
+#rounding off astrosat_dec(x2)
+x2=[]
+for i in range(len(b)):
+    x2.append(round(b[i],2));
+x2
+#rounding of lmbx_RA(y)
 import astropy.coordinates as coord
 import astropy.units as u
 new = []
@@ -18,7 +29,7 @@ for i in range(len(data)):
 y=[]
 for i in range(len(new)):
     y.append(round(new[i],2));
-
+#rounding of lmbx_Dec(y2)
 import astropy.coordinates as coord
 import astropy.units as u
 new2 = []
@@ -30,21 +41,20 @@ for i in range(len(data)):
 y2=[]
 for i in range(len(new2)):
     y2.append(round(new2[i],2));
+    
+    
 val = input("Enter your value: ")
-source= tbl["Source_name"]
-w= tbl['RA']
-q= tbl['Dec']
-for i in range(len(tbl)):
-    if source[i]==val:
-        index=i;
+source= data["NAME"]
+        
 for i in range(len(source)):
     if val==source[i]:
-        r=round(w[i],2)
-        r2=round(q[i],2)
-for i in range(len(y)):
-    if r==y[i]:
-        if y2[i]==r2:
+        r=y[i]
+        r2=y2[i]
+for i in range(len(x)):
+    if r==x[i]:
+        if x2[i]==r2:
             print("detected by astrosat")
-            print(tbl[index])
+            print(tbl[i])
         else:
             print("not detected by astrosat")
+    
