@@ -216,6 +216,7 @@ def build_map():
 
 ## Applet code
 root = Tk() 
+root.configure(bg= 'mint cream')
 # Wrapper 1 stores the Star Map:
 w1 = LabelFrame(root)
 w1.pack(fill="x",padx=10, pady=10)
@@ -307,12 +308,12 @@ B.pack(fill="both",expand="yes",padx=10, pady=10)
 ################ Wrapper 2 GUI #####################################
 
 # Frame for TreeView
-frame1 = tk.LabelFrame(w2, text="List of Proposals")
+frame1 = tk.LabelFrame(w2, text="List of Proposals",bg='SkyBlue1')
 frame1.pack(fill="both",expand="yes",padx=10, pady=5) 
 
 df = pd.read_csv(astro_csv_file)
 # Frame for Selected Catalog 
-file_frame = tk.LabelFrame(w2, text="Selected Proposal")
+file_frame = tk.LabelFrame(w2, text="Selected Proposal",bg='SkyBlue1')
 file_frame.pack(fill="both",expand="yes",padx=10, pady=5)
 
 
@@ -367,6 +368,6 @@ def clear_data():  #clears the data from the table
     return None
 
 # Execute Tkinter
-root.title("Welcome to ASTROSAT data analyzer")
+root.title("Welcome to ISRO data analyzer")
 root.geometry('800x800')
 root.mainloop()
