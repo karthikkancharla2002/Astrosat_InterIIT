@@ -195,11 +195,11 @@ B.pack()
 ################ Wrapper 2 GUI #####################################
 
 # Frame for TreeView
-frame1 = tk.LabelFrame(w2, text="List of Proposals")
+frame1 = tk.LabelFrame(w2, text="List of Proposals",bg='SkyBlue1')
 frame1.pack(fill="both",expand="yes",padx=10, pady=5) 
 
 # Frame for Selected Catalog 
-file_frame = tk.LabelFrame(w2, text="Selected Proposal")
+file_frame = tk.LabelFrame(w2, text="Selected Proposal",bg='SkyBlue1')
 file_frame.pack(fill="both",expand="yes",padx=10, pady=5)
 df = pd.read_csv('Astrosat_readings_new.csv')
 
