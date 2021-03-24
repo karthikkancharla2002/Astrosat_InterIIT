@@ -4,128 +4,80 @@ from tkinter import Tk, filedialog, messagebox, ttk, LabelFrame
 from matplotlib.figure import Figure 
 from matplotlib.backends.backend_tkagg import (FigureCanvasTkAgg,NavigationToolbar2Tk) 
 import numpy as np
-import sys
 import matplotlib.pyplot as plt
 from astropy.io import ascii
 import astropy.coordinates as astro_cords
 import astropy.units as astro_units
 
-currHoverData = []
-
+sources_csv_file = "lmxb_hmxb combined_cosmic sources.csv"
+astro_csv_file = './Astrosat_readings_new.csv'
 
 def clickedSourceBox(n_data):
     clickSourceRoot = Tk() 
-
     # Wrapper 1 stores the Star Map:
     wrapper_sources = LabelFrame(clickSourceRoot)
     wrapper_sources.pack(fill="both", expand="yes",padx=10, pady=10)
-
     # Wrapper 2 stores the Catalog content:
     wrapper_data = LabelFrame(clickSourceRoot)
     wrapper_data.pack(fill="both", expand="yes",padx=10, pady=10)
-
-    frame1 = tk.LabelFrame(wrapper_sources, text="List of Catalogs")
+    frame1 = tk.LabelFrame(wrapper_sources, text="List of Clicked Sources")
     frame1.pack(fill="both",expand="yes",padx=10, pady=5) 
-
-    file_frame = tk.LabelFrame(wrapper_data, text="Selected Catalog")
+    file_frame = tk.LabelFrame(wrapper_data, text="Selected Source data")
     file_frame.pack(fill="both",expand="yes",padx=10, pady=5)
-
     tv1s = ttk.Treeview(frame1, columns=["Sl.no", "Source_name"], show="headings", height="6")
     tv1s.heading("Sl.no", text = "Sl.no")
     tv1s.heading("Source_name", text = "Source Name")
     tv1s.place(relheight=1, relwidth=1) # set the height and width of the widget to 100% of its container (frame1).
-
     treescrolly = tk.Scrollbar(frame1, orient="vertical", command=tv1s.yview) # command means update the yaxis view of the widget
     treescrollx = tk.Scrollbar(frame1, orient="horizontal", command=tv1s.xview) # command means update the xaxis view of the widget
-
     tv1s.configure(xscrollcommand=treescrollx.set, yscrollcommand=treescrolly.set) # assign the scrollbars to the Treeview Widget
-
     treescrollx.pack(side="bottom", fill="x") # make the scrollbar fill the x axis of the Treeview widget
     treescrolly.pack(side="right", fill="y") # make the scrollbar fill the y axis of the Treeview widget
-
     tv2 = ttk.Treeview(file_frame, show="headings", height="6")
     tv2.place(relheight=1, relwidth=1)
-
     treescrolly2 = tk.Scrollbar(file_frame, orient="vertical", command=tv2.yview) # command means update the yaxis view of the widget
     treescrollx2 = tk.Scrollbar(file_frame, orient="horizontal", command=tv2.xview) # command means update the xaxis view of the widget
-
     tv2.configure(xscrollcommand=treescrollx2.set, yscrollcommand=treescrolly2.set) # assign the scrollbars to the Treeview Widget
-
     treescrollx2.pack(side="bottom", fill="x") # make the scrollbar fill the x axis of the Treeview widget
     treescrolly2.pack(side="right", fill="y") # make the scrollbar fill the y axis of the Treeview widget
-
     for i in range(len(n_data)):
         tv1s.insert('', 'end',values=(i+1,n_data[i]))
-
     def selectedSource(n_data):
-        # clear_data()
-        df2 = getData(n_data)
-        if len(df2)==0:
+        # print('selected', n_data)
+        s = tv1s.selection()[0]
+        selected_source_name = tv1s.item(s,"values")[1]
+        # print('selected',selected_catalog_id)
+        df_astrosat_data = getData(selected_source_name)
+        if (df_astrosat_data[df_astrosat_data.columns[0]].count())==0:
             messagebox.showinfo("information","Source not present in astrosat data set")  
             return
-        tv2["column"] = list(df2[0].columns)
+        tv2["column"] = list(df_astrosat_data.columns)
         tv2["show"] = "headings"
-
         for column in tv2["columns"]:
             tv2.heading(column, text=column) # let the column heading = column name
-        for df in df2:
-            tv2.insert("", "end", values=np.array(df).tolist()) # inserts each list into the treeview. For parameters see https://docs.python.org/3/library/tkinter.ttk.html#tkinter.ttk.Treeview.insert   
-
+        df_rows2 = df_astrosat_data.to_numpy().tolist() # turns the dataframe into a list of lists
+        for row in df_rows2:
+            tv2.insert("", "end", values=row) # inserts each list into the treeview. 
     tv1s.bind("<Double-1>", lambda n_data:  selectedSource(n_data))
     clickSourceRoot.title("Welcome to ASTROSAT data analyzer")
     clickSourceRoot.geometry('800x800')
     clickSourceRoot.mainloop()
 
-def getData(val):  
-    # val = "0900-403"  
-    tbl = ascii.read("Astrosat_readings_new.csv")
-    data = ascii.read("lmxb_hmxb combined_cosmic sources.csv")
-    a=tbl['RA']
-    b=tbl['Dec']
-    ra_values=[]  #x
-    dec_values=[] #x2
-    for i in range(len(a)):
-        ra_values.append(round(a[i],2))
-        dec_values.append(round(b[i],2))
-    
-    ra_degree = [] #new
-    radeg_rounded = [] #y
-    for i in range(len(data)):
-        i_row = data[i] # get the first (ith) row
-        ra = astro_cords.Angle(i_row["RA"], unit=astro_units.hour) # create an Angle object
-        ra_degree.append(ra.degree)
-    for i in range(len(ra_degree)):
-        radeg_rounded.append(round(ra_degree[i],2))
-    
-    dec_degree = [] #new2
-    for i in range(len(data)):
-        i_row = data[i] # get the first (ith) row
-        dec = astro_cords.Angle(i_row["Dec"], unit=astro_units.deg)
-        dec_degree.append(dec.degree)
-    decdeg_rounded=[] #y2
-    for i in range(len(dec_degree)):
-        decdeg_rounded.append(round(dec_degree[i],2))
-    source= data["NAME"]
-    r = 0
-    r2 = 0
-    for i in range(len(source)):
-        if val==source[i]:
-            r=radeg_rounded[i]
-            r2=decdeg_rounded[i]
-            # print(source[i])
-    data = []
-    for i in range(len(ra_values)):
-        if r==ra_values[i] and dec_values[i]==r2:
-            data.append(tbl[i])
-    return data
+def getData(source_name):  
+    df_sources = pd.read_csv(sources_csv_file)
+    df_astrosat = pd.read_csv(astro_csv_file)
+    row_source = df_sources[df_sources['NAME'] == source_name]
+    r = round(astro_cords.Angle(row_source["RA"].values[0], unit=astro_units.hour).degree,2)
+    r2 = round(astro_cords.Angle(row_source["Dec"].values[0], unit=astro_units.deg).degree,2)
+    result = df_astrosat[round(df_astrosat['RA'],2) == r]
+    result = result[round(result['Dec'],2) == r2]
+    return result
 
 def build_map():
     data = ascii.read("lmxb_hmxb combined_cosmic sources.csv")
-    
     ra_degree = []  #new
     dec_degree = [] #new2
     names = []
-
     for i in range(len(data)):
         i_row = data[i] # get the first (ith) row
         ra = astro_cords.Angle(i_row["RA"], unit=astro_units.hour) # create an Angle object
@@ -134,20 +86,15 @@ def build_map():
         dec_degree.append(dec.degree)
         name = i_row["NAME"]
         names.append(name)
-
     ra = astro_cords.Angle(ra_degree*astro_units.degree)
     ra = ra.wrap_at(180*astro_units.degree)
-
     dec = astro_cords.Angle(dec_degree*astro_units.degree)
-
     fig = plt.figure(figsize=(8,6))
     ax = fig.add_subplot(111, projection="mollweide")
     #scatter plot
     scat_plot = ax.scatter(ra.radian, dec.radian)
     annot = ax.annotate("", xy=(0,0), xytext=(20,20),textcoords="offset points", bbox=dict(boxstyle="round", fc="w"), arrowprops=dict(arrowstyle="->"))
     annot.set_visible(False)
-
-
     def update_annot(ind):
             pos = scat_plot.get_offsets()[ind["ind"][0]]
             annot.xy = pos
@@ -156,6 +103,11 @@ def build_map():
                 currHoverData = []
             for i in ind["ind"]:
                 text+= " Source name : "+names[i]+"\n"
+                df_astrosat_data = getData(names[i])
+                if (df_astrosat_data[df_astrosat_data.columns[0]].count())==0:
+                    text+= " Astrosat : False"+"\n"
+                else:
+                    text+= " Astrosat : True"+"\n"
                 currHoverData.append(names[i])
             annot.set_text(text)
             annot.get_bbox_patch()
@@ -200,6 +152,7 @@ w2.pack(fill="both",expand="yes",padx=10, pady=10)
 
 def makestarmap():
     build_map()
+
 B = tk.Button(w1, text ="GetStarMap", command = makestarmap)
 B.pack()
 
@@ -210,7 +163,6 @@ frame1 = tk.LabelFrame(w2, text="List of Catalogs")
 frame1.pack(fill="both",expand="yes",padx=10, pady=5) 
 
 
-astro_csv_file = './Astrosat_readings_new.csv'
 df = pd.read_csv(astro_csv_file)
 
 # Frame for Selected Catalog 
@@ -226,14 +178,17 @@ tv1.place(relheight=1, relwidth=1) # set the height and width of the widget to 1
 
 treescrolly = tk.Scrollbar(frame1, orient="vertical", command=tv1.yview) # command means update the yaxis view of the widget
 treescrollx = tk.Scrollbar(frame1, orient="horizontal", command=tv1.xview) # command means update the xaxis view of the widget
-
 tv1.configure(xscrollcommand=treescrollx.set, yscrollcommand=treescrolly.set) # assign the scrollbars to the Treeview Widget
 
 treescrollx.pack(side="bottom", fill="x") # make the scrollbar fill the x axis of the Treeview widget
 treescrolly.pack(side="right", fill="y") # make the scrollbar fill the y axis of the Treeview widget
 
+
+
 catalog_data = df[['Proposal_ID']]
 catalog_ID_list = sorted(set(catalog_data['Proposal_ID'].array))    
+for i in range(len(catalog_ID_list)):
+    tv1.insert('', 'end',values=(i+1,catalog_ID_list[i]))
 
 def OnDoubleClick(event):
         clear_data()
@@ -247,8 +202,6 @@ def OnDoubleClick(event):
         df_rows2 = df2.to_numpy().tolist() # turns the dataframe into a list of lists
         for row in df_rows2:
             tv2.insert("", "end", values=row) # inserts each list into the treeview. 
-for i in range(len(catalog_ID_list)):
-    tv1.insert('', 'end',values=(i+1,catalog_ID_list[i]))
 tv1.bind("<Double-1>", OnDoubleClick)
 
 ## Treeview Widget
