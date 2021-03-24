@@ -249,6 +249,6 @@ def clear_data():
     tv2.delete(*tv2.get_children())
     return None
 # Execute Tkinter
-root.title("Welcome to ASTROSAT data analyzer")
+root.title("Welcome to ISRO data analyzer")
 root.geometry('800x800')
 root.mainloop()
