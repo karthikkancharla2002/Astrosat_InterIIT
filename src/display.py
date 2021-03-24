@@ -56,7 +56,7 @@ def clickedSourceBox(n_data):
         for df in df2:
             tv2.insert("", "end", values=np.array(df).tolist()) # inserts each list into the treeview. For parameters see https://docs.python.org/3/library/tkinter.ttk.html#tkinter.ttk.Treeview.insert    
     tv1s.bind("<Double-1>", lambda n_data:  selectedSource(n_data))
-    clickSourceRoot.title("Welcome to ASTROSAT data analyzer")
+    clickSourceRoot.title("Welcome to ISRO data analyzer")
     clickSourceRoot.geometry('800x800')
     clickSourceRoot.mainloop()
 
@@ -189,24 +189,24 @@ w2.pack(fill="both",expand="yes",padx=10, pady=10)
 # STAR PLOT BUTTON
 def makestarmap():
     build_map()
-B = tk.Button(w1, text ="GetStarMap", command = makestarmap)
+B = tk.Button(w1, text ="GetStarMap", command = makestarmap , bg="RoyalBlue=3", bg="White")
 
 B.pack()
 ################ Wrapper 2 GUI #####################################
 
 # Frame for TreeView
-frame1 = tk.LabelFrame(w2, text="List of Catalogs")
+frame1 = tk.LabelFrame(w2, text="List of Proposals")
 frame1.pack(fill="both",expand="yes",padx=10, pady=5) 
 
 # Frame for Selected Catalog 
-file_frame = tk.LabelFrame(w2, text="Selected Catalog")
+file_frame = tk.LabelFrame(w2, text="Selected Proposal")
 file_frame.pack(fill="both",expand="yes",padx=10, pady=5)
 df = pd.read_csv('Astrosat_readings_new.csv')
 
 ## Treeview Widget
 tv1 = ttk.Treeview(frame1, columns=["Sl.no", "Catalog_ID"], show="headings", height="6")
 tv1.heading("Sl.no", text = "Sl.no")
-tv1.heading("Catalog_ID", text = "Catalog ID")
+tv1.heading("Catalog_ID", text = "Proposal ID")
 tv1.place(relheight=1, relwidth=1) # set the height and width of the widget to 100% of its container (frame1).
 
 treescrolly = tk.Scrollbar(frame1, orient="vertical", command=tv1.yview) # command means update the yaxis view of the widget
