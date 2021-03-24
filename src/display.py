@@ -176,6 +176,7 @@ def build_map():
     plt.show()
 ## Applet code
 root = Tk() 
+root.configure(bg= 'mint cream')
 # Wrapper 1 stores the Star Map:
 w1 = LabelFrame(root)
 w1.pack(fill="x",padx=10, pady=10)
