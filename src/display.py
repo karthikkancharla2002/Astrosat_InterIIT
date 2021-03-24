@@ -189,7 +189,7 @@ w2.pack(fill="both",expand="yes",padx=10, pady=10)
 # STAR PLOT BUTTON
 def makestarmap():
     build_map()
-B = tk.Button(w1, text ="GetStarMap", command = makestarmap , bg="RoyalBlue=3", fg="White")
+B = tk.Button(w1, text ="GetStarMap", command = makestarmap , bg="RoyalBlue3", fg="White")
 
 B.pack()
 ################ Wrapper 2 GUI #####################################
