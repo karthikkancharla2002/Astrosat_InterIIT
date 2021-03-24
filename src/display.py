@@ -8,13 +8,11 @@ import matplotlib.pyplot as plt
 from astropy.io import ascii
 import astropy.coordinates as astro_cords
 import astropy.units as astro_units
+import csv
 
+publications_csv = "./publication.csv"
 sources_csv_file = "lmxb_hmxb combined_cosmic sources.csv"
 astro_csv_file = './Astrosat_readings_new.csv'
-
-import csv
-publications_txt = "./AS_publications2019-21.txt"
-publications_csv = "./publication.csv"
 
 Title = 'Title'
 Authors = 'Authors'
@@ -49,7 +47,6 @@ with open(publications_csv, 'r', encoding="utf8") as file:
                 url_data.append(row[0][5:].strip())
 
 df_publications = pd.DataFrame([title_data, auth_data, bibl_data, keyword_data, abs_data, url_data], index=[Title,Authors,Bibliographi,Keywords,Abstract,URL]).T
-# print(df_publications.head())
 
 def displayPublicationData(source_name, source_name2):
     df_selected_source_publication = df_publications[(df_publications.Title.str.replace(" ","").str.find(source_name.replace(" ","")) != -1) | (df_publications.Title.str.replace(" ","").str.find(source_name2.replace(" ","")) != -1) ]
@@ -228,8 +225,84 @@ w2.pack(fill="both",expand="yes",padx=10, pady=10)
 
 def makestarmap():
     build_map()
-B = tk.Button(w1, text ="Generate Map", command = makestarmap , bg="RoyalBlue=3")
-B.pack()
+
+# var = StringVar()
+
+heading = tk.Label( w1, text="VISUALIZATION TOOL FOR ASTROSAT OBSERVATIONS", font=("Arial", 15))
+heading.pack()
+
+file_input_frame_alpha = tk.LabelFrame(w1, text="Import Files")
+file_input_frame_alpha.pack(fill="x",expand="yes",padx=10, pady=10)
+
+# astrosat data file
+file_frame_astrosat_data = tk.LabelFrame(file_input_frame_alpha, text="Astrosat Data File")
+file_frame_astrosat_data.pack(side="left",expand="yes",padx=10, pady=10,fill = tk.BOTH)
+label_file_text = "No File Selected"
+varast = tk.StringVar()
+label_file = ttk.Label(file_frame_astrosat_data, textvariable=varast)
+varast.set(label_file_text[-25:])
+label_file.pack(fill="x",expand="yes",padx=10, pady=2)
+button1_astrosat_data = tk.Button(file_frame_astrosat_data, text="Browse A File", command=lambda: File_dialog(label_file_text, varast))
+button1_astrosat_data.pack(fill="x",expand="yes",padx=10, pady=2)
+button2_astrosat_data = tk.Button(file_frame_astrosat_data, text="Load File", command=lambda: Load_excel_data(astro_csv_file, label_file_text))
+button2_astrosat_data.pack(fill="x",expand="yes",padx=10, pady=2)
+
+# Sources Data
+file_frame_sources_data = tk.LabelFrame(file_input_frame_alpha, text="Sources Data File")
+file_frame_sources_data.pack(side="left",expand="yes",padx=10, pady=10, fill = tk.BOTH)
+label_file_sources_text = "No File Selected"
+varsou = tk.StringVar()
+label_file_sources = ttk.Label(file_frame_sources_data, textvariable=varsou)
+varsou.set( label_file_sources_text[-25:])
+label_file_sources.pack(fill="x",expand="yes",padx=10, pady=2)
+button1_sources_data = tk.Button(file_frame_sources_data, text="Browse A File", command=lambda: File_dialog(label_file_sources_text, varsou))
+button1_sources_data.pack(fill="x",expand="yes",padx=10, pady=2)
+button2_sources_data = tk.Button(file_frame_sources_data, text="Load File", command=lambda: Load_excel_data(sources_csv_file, label_file_sources_text))
+button2_sources_data.pack(fill="x",expand="yes",padx=10, pady=2)
+
+# Publications Data
+file_frame_publications_data = tk.LabelFrame(file_input_frame_alpha, text="Publications Data File")
+file_frame_publications_data.pack(side="left",expand="yes",padx=10, pady=10, fill = tk.BOTH)
+label_file_publications_text = "No File Selected"
+varpub = tk.StringVar()
+label_file_publications = ttk.Label(file_frame_publications_data, textvariable=varpub)
+varpub.set(label_file_publications_text[-25:])
+label_file_publications.pack(fill="x",expand="yes",padx=10, pady=2)
+button1_publications_data = tk.Button(file_frame_publications_data, text="Browse A File", command=lambda: File_dialog(label_file_publications_text, varpub))
+button1_publications_data.pack(fill="x",expand="yes",padx=10, pady=2)
+button2_publications_data = tk.Button(file_frame_publications_data, text="Load File", command=lambda: Load_excel_data(publications_csv, label_file_publications_text))
+button2_publications_data.pack(fill="x",expand="yes",padx=10, pady=2)
+
+
+def File_dialog(label_file, var):
+    """This Function will open the file explorer and assign the chosen file path to label_file"""
+    filename = filedialog.askopenfilename(initialdir="/",
+                                          title="Select A File",
+                                          filetype=(("xlsx files", "*.xlsx"),("All Files", "*.*")))
+    label_file = filename
+    var.set(label_file[-25:])
+    return None
+
+def Load_excel_data(pathToSet, label_file):
+    """If the file selected is valid this will load the file into the Treeview"""
+    file_path = label_file
+    try:
+        excel_filename = r"{}".format(file_path)
+        if excel_filename[-4:] == ".csv":
+            pathToSet = excel_filename
+        else:
+            tk.messagebox.showerror("Information", "Please select a csv file")
+
+    except ValueError:
+        tk.messagebox.showerror("Information", "The file you have chosen is invalid")
+        return None
+    except FileNotFoundError:
+        tk.messagebox.showerror("Information", "No such file as {}".format(file_path))
+        return None
+
+
+B = tk.Button(w1, text ="Generate Map", command = makestarmap , bg="white")
+B.pack(fill="both",expand="yes",padx=10, pady=10)
 
 ################ Wrapper 2 GUI #####################################
 
@@ -237,9 +310,7 @@ B.pack()
 frame1 = tk.LabelFrame(w2, text="List of Proposals")
 frame1.pack(fill="both",expand="yes",padx=10, pady=5) 
 
-
 df = pd.read_csv(astro_csv_file)
-
 # Frame for Selected Catalog 
 file_frame = tk.LabelFrame(w2, text="Selected Proposal")
 file_frame.pack(fill="both",expand="yes",padx=10, pady=5)
